@@ -17,7 +17,7 @@ try {
       image text,
       description varchar(255),
       created_at timestamp default now()
-    ); 
+    )
   `);
 
   await database.query(`
@@ -29,7 +29,7 @@ try {
       content text not null,
       user_id int not null,
       foreign key (user_id) references users(id)
-    );
+    )
   `);
 } catch (err) {
   console.error(err);

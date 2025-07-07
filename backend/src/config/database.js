@@ -31,8 +31,6 @@ try {
       foreign key (user_id) references users(id)
     );
   `);
-
-  console.log("Database tables created successfully");
 } catch (err) {
   console.error(err);
 }

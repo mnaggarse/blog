@@ -15,6 +15,8 @@ export const getPostById = async (req, res) => {
 
   try {
     const post = await PostModel.getPostById(id);
+    if (!post) return res.status(404).json({ message: "Post not found" });
+
     res.status(200).json(post);
   } catch (err) {
     console.error("Error in getPostById controller:", err);
@@ -50,10 +52,10 @@ export const updatePost = async (req, res) => {
   }
 };
 
-export const deleteAllPosts = async (req, res) => {
+export const deleteAllPosts = async (_req, res) => {
   try {
     const posts = await PostModel.getAllPosts();
-    if (!posts) return res.status(400).json({ message: "There is no posts" });
+    if (posts.length == 0) return res.status(400).json({ message: "There is no posts" });
 
     await PostModel.deleteAllPosts();
     res.status(200).json({ message: "All posts deleted successfully" });
@@ -63,7 +65,7 @@ export const deleteAllPosts = async (req, res) => {
   }
 };
 
-export const deletePostById = async (req, res) => {
+export const deletePostById = async (c, res) => {
   const { id } = req.params;
 
   try {

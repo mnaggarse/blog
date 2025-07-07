@@ -17,6 +17,13 @@ export const createPost = async ({ title, description, image, content, user_id }
   );
 };
 
+export const updatePost = async ({ title, description, image, content, id }) => {
+  await database.query(
+    "update posts set title = $1, description = $2, image = $3, content = $4 where id = $5",
+    [title, description, image, content, id]
+  );
+};
+
 export const deleteAllPosts = async () => {
   await database.query("delete from posts");
 };

@@ -34,6 +34,22 @@ export const createPost = async (req, res) => {
   }
 };
 
+export const updatePost = async (req, res) => {
+  const { id } = req.params;
+  const { title, description, image, content } = req.body;
+
+  try {
+    const post = await PostModel.getPostById(id);
+    if (!post) return res.status(404).json({ message: "Post not found" });
+
+    await PostModel.updatePost({ title, description, image, content, id });
+    res.status(200).json({ message: "Post updated successfully" });
+  } catch (err) {
+    console.error("Error in deleteAllPosts controller:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 export const deleteAllPosts = async (req, res) => {
   try {
     const posts = await PostModel.getAllPosts();

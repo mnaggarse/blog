@@ -2,6 +2,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import commentRoutes from "./routers/comment.router.js";
+import likeRoutes from "./routers/like.router.js";
 import postRoutes from "./routers/post.router.js";
 import userRoutes from "./routers/user.router.js";
 
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
+app.use("/api/likes", likeRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log("Server is running");

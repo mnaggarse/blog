@@ -5,6 +5,11 @@ export const getAllUsers = async () => {
   return result.rows;
 };
 
+export const getUserById = async (id) => {
+  const result = await database.query("select * from users where id = $1", [id]);
+  return result.rows[0];
+};
+
 export const getUserByEmail = async (email) => {
   const result = await database.query("select * from users where email = $1", [email]);
   return result.rows[0];

@@ -91,14 +91,15 @@ export const deleteUserPosts = async (req, res) => {
 };
 
 export const deletePostById = async (req, res) => {
-  const { userId, postId } = req.params;
+  const { postId } = req.params;
+  const { userId } = req.body;
 
   try {
-    const user = await UserModel.getUserById(userId);
-    if (!user) return res.status(404).json({ message: "User not found" });
-
     const post = await PostModel.getPostById(postId);
     if (!post) return res.status(404).json({ message: "Post not found" });
+
+    if (post.user_id != userId)
+      return res.status(400).json({ message: "You are not allowed to delete this post" });
 
     await PostModel.deletePostById({ userId, postId });
     res.status(200).json({ message: "Post deleted successfully" });

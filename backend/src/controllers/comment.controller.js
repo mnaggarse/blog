@@ -35,3 +35,22 @@ export const createComment = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const deleteCommentById = async (req, res) => {
+  const { commentId } = req.params;
+  const { userId } = req.body;
+
+  try {
+    const comment = await CommentModel.getCommentById(commentId);
+    if (!comment) return res.status(404).json({ message: "Comment not found" });
+
+    if (comment.user_id != userId)
+      return res.status(400).json({ message: "You are not allowed to delete this comment" });
+
+    await CommentModel.deleteCommentById(commentId);
+    res.status(200).json({ message: "Comment deleted successfully" });
+  } catch (err) {
+    console.error("Error in createComment controller:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

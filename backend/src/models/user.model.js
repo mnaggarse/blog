@@ -5,8 +5,8 @@ export const getAllUsers = async () => {
   return result.rows;
 };
 
-export const getUserById = async (id) => {
-  const result = await database.query("select * from users where id = $1", [id]);
+export const getUserById = async (userId) => {
+  const result = await database.query("select * from users where id = $1", [userId]);
   return result.rows[0];
 };
 
@@ -15,10 +15,9 @@ export const getUserByEmail = async (email) => {
   return result.rows[0];
 };
 
-export const createUser = async ({ name, email, password }) => {
-  await database.query("insert into users (name, email, password) values ($1, $2, $3)", [
-    name,
-    email,
-    password,
-  ]);
+export const createUser = async ({ name, email, password, image, description }) => {
+  await database.query(
+    "insert into users (name, email, password, image, description) values ($1, $2, $3, $4, $5)",
+    [name, email, password, image, description]
+  );
 };

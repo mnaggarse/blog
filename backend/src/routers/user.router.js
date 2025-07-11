@@ -4,6 +4,7 @@ import {
   deletePostById,
   deleteUserPosts,
   getUserPosts,
+  updatePost,
 } from "../controllers/post.controller.js";
 import {
   createUser,
@@ -16,12 +17,15 @@ const router = express.Router();
 
 router.get("/", getAllUsers);
 router.post("/", createUser);
+
 router.get("/:userId", getUserById);
 router.delete("/:userId", deleteUser);
 
 router.get("/:userId/posts", getUserPosts);
 router.post("/:userId/posts", createPost);
 router.delete("/:userId/posts", deleteUserPosts);
+
+router.put("/:userId/posts/:postId", updatePost);
 router.delete("/:userId/posts/:postId", deletePostById);
 
 export default router;

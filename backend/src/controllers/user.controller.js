@@ -38,3 +38,22 @@ export const createUser = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const deleteUser = async (req, res) => {
+  const { userId } = req.params;
+  const { userId: reqUserId } = req.body;
+
+  try {
+    const user = await UserModel.getUserById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (user.id != reqUserId)
+      return res.status(400).json({ message: "You are not allowed to delete this user" });
+
+    await UserModel.deleteUser(userId);
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (err) {
+    console.error("Error in getAllUsers controller:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

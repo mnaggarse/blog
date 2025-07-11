@@ -21,3 +21,7 @@ export const createUser = async ({ name, email, password, image, description }) 
     [name, email, password, image, description]
   );
 };
+
+export const deleteUser = async (userId) => {
+  await database.query("delete from users where id = $1", [userId]);
+};

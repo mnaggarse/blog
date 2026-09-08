@@ -1,6 +1,6 @@
 import { eq, desc } from "drizzle-orm";
 import { db } from "../db/config.js";
-import { posts, type NewPost } from "../db/schema.js";
+import { posts, users, type NewPost } from "../db/schema.js";
 
 export const createPost = async (data: Omit<NewPost, "id" | "createdAt" | "updatedAt">) => {
   const [newPost] = await db.insert(posts).values(data).returning();
@@ -8,12 +8,53 @@ export const createPost = async (data: Omit<NewPost, "id" | "createdAt" | "updat
 };
 
 export const getAllPosts = async () => {
-  return await db.select().from(posts).orderBy(desc(posts.createdAt));
+  const rows = await db
+    .select({
+      id: posts.id,
+      title: posts.title,
+      imageUrl: posts.imageUrl,
+      description: posts.description,
+      content: posts.content,
+      userId: posts.userId,
+      createdAt: posts.createdAt,
+      updatedAt: posts.updatedAt,
+      author: {
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        avatarUrl: users.avatarUrl,
+      },
+    })
+    .from(posts)
+    .innerJoin(users, eq(posts.userId, users.id))
+    .orderBy(desc(posts.createdAt));
+
+  return rows;
 };
 
 export const getPostById = async (id: number) => {
-  const [post] = await db.select().from(posts).where(eq(posts.id, id));
-  return post ?? null;
+  const [row] = await db
+    .select({
+      id: posts.id,
+      title: posts.title,
+      imageUrl: posts.imageUrl,
+      description: posts.description,
+      content: posts.content,
+      userId: posts.userId,
+      createdAt: posts.createdAt,
+      updatedAt: posts.updatedAt,
+      author: {
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        avatarUrl: users.avatarUrl,
+      },
+    })
+    .from(posts)
+    .innerJoin(users, eq(posts.userId, users.id))
+    .where(eq(posts.id, id));
+
+  return row ?? null;
 };
 
 export const updatePost = async (
@@ -28,6 +69,7 @@ export const updatePost = async (
     })
     .where(eq(posts.id, id))
     .returning();
+
   return updatedPost ?? null;
 };
 

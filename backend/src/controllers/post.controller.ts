@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import * as postService from "../services/post.service.js";
+import * as userService from "../services/user.service.js";
 
 export const createPostHandler = async (
   req: Request,
@@ -7,12 +8,25 @@ export const createPostHandler = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { title, imageUrl, description, content } = req.body || {};
+    const { title, imageUrl, description, content, userId } = req.body || {};
 
-    if (!title || !imageUrl || !description || !content) {
+    if (!title || !imageUrl || !description || !content || !userId) {
       res.status(400).json({
-        message: "Validation error: title, imageUrl, description, and content are required.",
+        message:
+          "Validation error: title, imageUrl, description, content, and userId are required.",
       });
+      return;
+    }
+
+    const numericUserId = Number(userId);
+    if (isNaN(numericUserId)) {
+      res.status(400).json({ message: "Invalid userId format." });
+      return;
+    }
+
+    const user = await userService.getUserById(numericUserId);
+    if (!user) {
+      res.status(404).json({ message: "User not found." });
       return;
     }
 
@@ -21,6 +35,7 @@ export const createPostHandler = async (
       imageUrl,
       description,
       content,
+      userId: numericUserId,
     });
 
     res.status(201).json(post);

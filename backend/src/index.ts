@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import postRoutes from "./routes/post.routes.js";
+import userRoutes from "./routes/user.routes.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -11,6 +12,9 @@ app.use(express.json());
 app.get("/", (_req, res) => {
   res.json({ message: "Blog API server is running" });
 });
+
+// User API routes
+app.use("/api/users", userRoutes);
 
 // Blog posts API routes
 app.use("/api/posts", postRoutes);

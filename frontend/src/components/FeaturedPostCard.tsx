@@ -45,7 +45,7 @@ export function FeaturedPostCard({ post }: FeaturedPostCardProps) {
 
       <Card className="overflow-hidden border-border/60 shadow-md hover:shadow-lg transition-all duration-300 grid grid-cols-1 lg:grid-cols-12 gap-0">
         {/* Post Cover Image */}
-        <div className="lg:col-span-7 relative aspect-[16/9] lg:aspect-auto overflow-hidden bg-muted">
+        <div className="lg:col-span-7 relative aspect-video lg:aspect-auto overflow-hidden bg-muted">
           <img
             src={post.imageUrl}
             alt={post.title}
@@ -54,7 +54,7 @@ export function FeaturedPostCard({ post }: FeaturedPostCardProps) {
           />
           <div className="absolute top-4 left-4">
             <Badge variant="secondary" className="bg-background/90 backdrop-blur-md text-xs font-medium">
-              {post.tag || "Editor's Choice"}
+              {post.tag}
             </Badge>
           </div>
         </div>

@@ -25,10 +25,15 @@ interface PostGridProps {
   searchQuery: string;
 }
 
-const CATEGORIES = ["All", "Engineering", "Design", "Culture", "AI & Tech"];
-
 export function PostGrid({ posts, isLoading, searchQuery }: PostGridProps) {
   const [selectedCategory, setSelectedCategory] = useState("All");
+
+  const categories = [
+    "All",
+    ...Array.from(
+      new Set(posts.map((p) => p.tag).filter((t): t is string => Boolean(t)))
+    ),
+  ];
 
   const filteredPosts = posts.filter((post) => {
     const matchesCategory =
@@ -54,19 +59,21 @@ export function PostGrid({ posts, isLoading, searchQuery }: PostGridProps) {
         </div>
 
         {/* Category Filters */}
-        <div id="topics" className="flex items-center gap-1.5 overflow-x-auto pb-2 sm:pb-0 scrollbar-none">
-          {CATEGORIES.map((cat) => (
-            <Button
-              key={cat}
-              variant={selectedCategory === cat ? "default" : "outline"}
-              size="xs"
-              onClick={() => setSelectedCategory(cat)}
-              className="rounded-full text-xs px-3.5 h-7 font-medium shrink-0"
-            >
-              {cat}
-            </Button>
-          ))}
-        </div>
+        {categories.length > 1 && (
+          <div id="topics" className="flex items-center gap-1.5 overflow-x-auto pb-2 sm:pb-0 scrollbar-none">
+            {categories.map((cat) => (
+              <Button
+                key={cat}
+                variant={selectedCategory === cat ? "default" : "outline"}
+                size="xs"
+                onClick={() => setSelectedCategory(cat)}
+                className="rounded-full text-xs px-3.5 h-7 font-medium shrink-0"
+              >
+                {cat}
+              </Button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Grid Container */}
@@ -74,7 +81,7 @@ export function PostGrid({ posts, isLoading, searchQuery }: PostGridProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3, 4, 5, 6].map((idx) => (
             <Card key={idx} className="overflow-hidden">
-              <Skeleton className="aspect-[16/10] w-full" />
+              <Skeleton className="aspect-16/10 w-full" />
               <CardHeader className="p-5">
                 <Skeleton className="h-4 w-20 mb-2" />
                 <Skeleton className="h-6 w-full mb-2" />
@@ -94,7 +101,9 @@ export function PostGrid({ posts, isLoading, searchQuery }: PostGridProps) {
           </div>
           <h3 className="mt-4 text-base font-semibold text-foreground">No stories found</h3>
           <p className="mt-1 text-xs text-muted-foreground max-w-sm mx-auto">
-            We couldn't find any articles matching your search filter. Try clearing your search query or selecting another topic.
+            {posts.length === 0
+              ? "There are no published stories available right now. Check back later!"
+              : "We couldn't find any articles matching your search filter. Try clearing your search query or selecting another topic."}
           </p>
         </div>
       ) : (
@@ -119,7 +128,7 @@ export function PostGrid({ posts, isLoading, searchQuery }: PostGridProps) {
               >
                 <div>
                   {/* Card Cover Image */}
-                  <div className="relative aspect-[16/10] overflow-hidden bg-muted">
+                  <div className="relative aspect-16/10 overflow-hidden bg-muted">
                     <img
                       src={post.imageUrl}
                       alt={post.title}
@@ -131,7 +140,7 @@ export function PostGrid({ posts, isLoading, searchQuery }: PostGridProps) {
                         variant="secondary"
                         className="bg-background/90 backdrop-blur-md text-[11px] font-medium px-2.5 py-0.5"
                       >
-                        {post.tag || "General"}
+                        {post.tag}
                       </Badge>
                     </div>
                   </div>
@@ -164,7 +173,7 @@ export function PostGrid({ posts, isLoading, searchQuery }: PostGridProps) {
                       <AvatarImage src={post.author.avatarUrl || undefined} alt={post.author.name} />
                       <AvatarFallback className="text-[10px]">{authorInitials}</AvatarFallback>
                     </Avatar>
-                    <span className="text-xs font-medium text-foreground truncate max-w-[110px]">
+                    <span className="text-xs font-medium text-foreground truncate max-w-27.5">
                       {post.author.name}
                     </span>
                   </div>

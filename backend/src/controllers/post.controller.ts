@@ -8,7 +8,7 @@ export const createPostHandler = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { title, imageUrl, description, content, userId } = req.body || {};
+    const { title, imageUrl, description, content, userId, tag } = req.body || {};
 
     if (!title || !imageUrl || !description || !content || !userId) {
       res.status(400).json({
@@ -36,6 +36,7 @@ export const createPostHandler = async (
       description,
       content,
       userId: numericUserId,
+      tag,
     });
 
     res.status(201).json(post);
@@ -98,13 +99,14 @@ export const updatePostHandler = async (
       return;
     }
 
-    const { title, imageUrl, description, content } = req.body || {};
+    const { title, imageUrl, description, content, tag } = req.body || {};
 
     const updatedPost = await postService.updatePost(postId, {
       ...(title !== undefined && { title }),
       ...(imageUrl !== undefined && { imageUrl }),
       ...(description !== undefined && { description }),
       ...(content !== undefined && { content }),
+      ...(tag !== undefined && { tag }),
     });
 
     if (!updatedPost) {

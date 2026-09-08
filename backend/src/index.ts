@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import commentRoutes from "./routes/comment.routes.js";
 import postRoutes from "./routes/post.routes.js";
 import userRoutes from "./routes/user.routes.js";
 
@@ -18,6 +19,9 @@ app.use("/api/users", userRoutes);
 
 // Blog posts API routes
 app.use("/api/posts", postRoutes);
+
+// Comments API routes
+app.use("/api/comments", commentRoutes);
 
 // Global Error Handler
 app.use(

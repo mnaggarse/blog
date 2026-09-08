@@ -1,6 +1,7 @@
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, sql } from "drizzle-orm";
 import { db } from "../db/config.js";
 import { posts, users, type NewPost } from "../db/schema.js";
+import { getPostComments } from "./comment.service.js";
 
 export const createPost = async (data: Omit<NewPost, "id" | "createdAt" | "updatedAt">) => {
   const [newPost] = await db.insert(posts).values(data).returning();
@@ -24,6 +25,8 @@ export const getAllPosts = async () => {
         email: users.email,
         avatarUrl: users.avatarUrl,
       },
+      likesCount: sql<number>`(select count(*)::int from likes where likes.post_id = ${posts.id})`,
+      commentsCount: sql<number>`(select count(*)::int from comments where comments.post_id = ${posts.id})`,
     })
     .from(posts)
     .innerJoin(users, eq(posts.userId, users.id))
@@ -49,12 +52,23 @@ export const getPostById = async (id: number) => {
         email: users.email,
         avatarUrl: users.avatarUrl,
       },
+      likesCount: sql<number>`(select count(*)::int from likes where likes.post_id = ${posts.id})`,
+      commentsCount: sql<number>`(select count(*)::int from comments where comments.post_id = ${posts.id})`,
     })
     .from(posts)
     .innerJoin(users, eq(posts.userId, users.id))
     .where(eq(posts.id, id));
 
-  return row ?? null;
+  if (!row) {
+    return null;
+  }
+
+  const postComments = await getPostComments(id);
+
+  return {
+    ...row,
+    comments: postComments,
+  };
 };
 
 export const updatePost = async (
